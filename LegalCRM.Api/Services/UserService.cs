@@ -22,4 +22,10 @@ public class UserService
         var result = await _userManager.CreateAsync(user, password);
         return result;
     }
+    public async Task<bool> ValidateCredentialsAsync(string userName, string password)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+        if (user is null) return false;
+        return await _userManager.CheckPasswordAsync(user, password);
+    }
 }
