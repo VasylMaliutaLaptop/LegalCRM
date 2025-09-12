@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Rendering
+@inject NavigationManager Nav
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="header">
+    <AuthorizeView>
+        <Authorized>
+            <nav>
+                <a href="/">Главная</a>
+                <a href="/cases">Кейсы</a>
+                <a href="/clients">Профили</a>
+            </nav>
+            <button @onclick="Logout">Выйти</button>
+        </Authorized>
+        <NotAuthorized>
+            <nav>
+                <a href="/login">Вход</a>
+                <a href="/register">Регистрация</a>
+            </nav>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+@code {
+    private async Task Logout()
+    {
+        // очистка токена
+        await JS.InvokeVoidAsync("sessionStorage.removeItem", "authToken");
+        Http.DefaultRequestHeaders.Authorization = null;
+
+        // уведомить провайдера аутентификации (если используется JwtAuthStateProvider)
+        if (AuthStateProvider is JwtAuthStateProvider jwtProvider)
+            await jwtProvider.MarkUserAsLoggedOut();
+
+        // вернуть на логин с returnUrl текущей страницы
+        var relative = Nav.ToBaseRelativePath(Nav.Uri);
+        var url = string.IsNullOrWhiteSpace(relative) ? "/login" : $"/login?returnUrl=/{Uri.EscapeDataString(relative)}";
+        Nav.NavigateTo(url, forceLoad: true);
+    }
+}
