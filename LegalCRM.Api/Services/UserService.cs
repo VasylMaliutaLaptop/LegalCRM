@@ -2,14 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 
 namespace LegalCRM.Api.Services;
-public class UserService
+public class UserService(UserManager<User> userManager)
 {
-    private readonly UserManager<User> _userManager;
-
-    public UserService(UserManager<User> userManager)
-    {
-        _userManager = userManager;
-    }
+    private readonly UserManager<User> _userManager = userManager;
 
     public async Task<IdentityResult> RegisterUserAsync(string userName, string email, string password)
     {

@@ -1,6 +1,6 @@
 ﻿using LegalCRM.Api.Services;
+using LegalCRM.Shared.Contracts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,28 +11,23 @@ namespace LegalCRM.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountController : ControllerBase
+    public class AccountController(UserService userService) : ControllerBase
     {
-        private readonly UserService _userService;
-
-        public AccountController(UserService userService)
-        {
-            _userService = userService;
-        }
+        private readonly UserService _userService = userService;
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterDTO register)
         {
-            var result = await _userService.RegisterUserAsync(model.UserName, model.Email, model.Password);
+            var result = await _userService.RegisterUserAsync(register.UserName, register.Email, register.Password);
             if (result.Succeeded)
                 return Ok("Пользователь успешно зарегистрирован");
             else
                 return BadRequest(result.Errors);
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginModel model, [FromServices] IConfiguration config)
+        public async Task<IActionResult> Login(LoginDTO login, [FromServices] IConfiguration config)
         {
-            var ok = await _userService.ValidateCredentialsAsync(model.UserName, model.Password);
+            var ok = await _userService.ValidateCredentialsAsync(login.UserName, login.Password);
             if (!ok) return Unauthorized("Неверные учетные данные");
 
             var jwt = config.GetSection("Jwt");
@@ -40,12 +35,12 @@ namespace LegalCRM.Api.Controllers
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
-    {
-        new Claim(JwtRegisteredClaimNames.Sub, model.UserName),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(JwtRegisteredClaimNames.Iss, jwt["Issuer"]!)
-        // добавьте роли/свои claims при необходимости
-    };
+            {
+                new (JwtRegisteredClaimNames.Sub, login.UserName),
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new (JwtRegisteredClaimNames.Iss, jwt["Issuer"]!)
+                // добавьте роли/свои claims при необходимости
+            };
 
             var expires = DateTime.UtcNow.AddMinutes(int.Parse(jwt["ExpiresMinutes"]!));
             var token = new JwtSecurityToken(
@@ -62,18 +57,5 @@ namespace LegalCRM.Api.Controllers
         [Authorize]
         [HttpGet("me")]
         public IActionResult Me() => Ok(User.Claims.Select(c => new { c.Type, c.Value }));
-
-    }
-
-    public class RegisterModel
-    {
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
-    public class LoginModel
-    {
-        public string UserName { get; set; }
-        public string Password { get; set; }
     }
 }

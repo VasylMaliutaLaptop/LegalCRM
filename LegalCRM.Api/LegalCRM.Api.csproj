@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LegalCRM.Data\LegalCRM.Data.csproj" />
+    <ProjectReference Include="..\LegalCRM.Shared\LegalCRM.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -68,22 +68,22 @@
             }
 
             var auth = await resp.Content.ReadFromJsonAsync<AuthResponseDTO>();
-            if (auth is null || string.IsNullOrWhiteSpace(auth.Access_token))
+            if (auth is null || string.IsNullOrWhiteSpace(auth.AccessЕoken))
             {
                 message = "Некорректный ответ сервера";
                 return;
             }
 
             // сохранить токен (sessionStorage)
-            await JS.InvokeVoidAsync("sessionStorage.setItem", "authToken", auth.Access_token); // JS interop нужен через IJSRuntime[5][9]
+            await JS.InvokeVoidAsync("sessionStorage.setItem", "authToken", auth.AccessЕoken); // JS interop нужен через IJSRuntime[5][9]
 
             // добавить заголовок Authorization по умолчанию
             Http.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", auth.Access_token);
+                new AuthenticationHeaderValue("Bearer", auth.AccessЕoken);
 
             // уведомить провайдер аутентификации (если используется кастомный JwtAuthStateProvider)
             if (AuthStateProvider is JwtAuthStateProvider jwtProvider)
-                await jwtProvider.MarkUserAsAuthenticated(auth.Access_token);
+                await jwtProvider.MarkUserAsAuthenticated(auth.AccessЕoken);
             Nav.NavigateTo(returnUrl ?? "/");
         }
         finally { busy = false; }
