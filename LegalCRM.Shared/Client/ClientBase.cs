@@ -5,7 +5,7 @@
         public int Id { get; protected set; }
         public ContactInfo Contact { get; protected set; } = new ContactInfo();
         public ClientStatus Status { get; protected set; } = ClientStatus.Draft;
-        public List<int> CaseIds { get; protected set; } = new List<int>();
+        public List<int> CaseIds { get; protected set; } = [];
 
         // Audit
         public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
