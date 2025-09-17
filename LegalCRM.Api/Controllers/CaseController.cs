@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using LegalCRM.Api.Services;
 using LegalCRM.Data;
 using LegalCRM.Shared.Case;
@@ -30,10 +31,31 @@ namespace LegalCRM.Api.Controllers
 
             return Ok(entity.Id);
         }
-        [HttpGet("getCases")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAll()
         {
-            return NotFound();
+            var items = await context.Cases
+                .ProjectTo<CaseReadDto>(mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return Ok(items);
+        }
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var cases = await context.Cases.ToListAsync();
+        //    var dtos = mapper.Map<List<CaseReadDto>>(cases);
+        //    return Ok(dtos);
+        //}
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var dto = await context.Cases
+                .Where(c => c.Id == id)
+                .ProjectTo<CaseReadDto>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
+
+            if (dto is null) return NotFound();
+            return Ok(dto);
         }
     }
 }

@@ -9,8 +9,41 @@
 <div class="mb-3">
     <button class="btn btn-primary" @onclick="NavigateToAddCase">Добавить дело</button>
 </div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Status</th>
+            <th>CreatedAt</th>
+            <th>UpdatedAt</th>
+            <th>Client</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (cases != null)
+        {
+            foreach (var item in cases)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Status</td>
+                    <td>@item.CreatedAt</td>
+                    <td>@item.UpdatedAt</td>
+                    <td>
+                        @item.Client?.ToString()
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
 @code {
+    private List<CaseReadDto>? cases = new();
+    override protected async Task OnInitializedAsync()
+    {
+        cases = await Http.GetFromJsonAsync<List<CaseReadDto>>("api/Case/getAll");
+    }
     private void NavigateToAddCase()
     {
         Nav.NavigateTo("cases/add");
@@ -19,10 +52,5 @@
     private void ViewCase(int id)
     {
         Nav.NavigateTo($"cases/{id}");
-    }
-
-    private void EditCase(int id)
-    {
-        Nav.NavigateTo($"cases/{id}/edit");
     }
 }

@@ -8,7 +8,7 @@ namespace LegalCRM.Api.Controllers
     [Route("api/[controller]")]
     public class ClientController(ClientService clientService) : Controller
     {
-        [HttpGet("list")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> List()
         {
             var items = await clientService.GetListAsync();

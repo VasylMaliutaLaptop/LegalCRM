@@ -20,7 +20,7 @@
     private List<ClientDTO>? clients;
     protected override async Task OnInitializedAsync()
     {
-        clients = await Http.GetFromJsonAsync<List<ClientDTO>>("api/Client/list");
+        clients = await Http.GetFromJsonAsync<List<ClientDTO>>("api/Client/getAll");
     }
     private async void AddClient()
     {
