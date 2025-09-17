@@ -35,10 +35,10 @@
 </table>
 
 @code {
-    private List<ClientDTO>? clients;
+    private List<ClientReadDto>? clients;
     protected override async Task OnInitializedAsync()
     {
-        clients = await Http.GetFromJsonAsync<List<ClientDTO>>("api/Client/getAll");
+        clients = await Http.GetFromJsonAsync<List<ClientReadDto>>("api/Client/getAll");
     }
     private void NavigateToAddClient()
     {

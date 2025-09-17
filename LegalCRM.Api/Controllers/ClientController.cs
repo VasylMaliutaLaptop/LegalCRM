@@ -15,13 +15,13 @@ namespace LegalCRM.Api.Controllers
             return Ok(items);
         }
         [HttpPost("addClient")]
-        public async Task<IActionResult> Add(ClientDTO clientDTO, CancellationToken ct = default)
+        public async Task<IActionResult> Add(ClientCreateDto _clientCreateDto, CancellationToken ct = default)
         {
-            if (clientDTO == null)
+            if (_clientCreateDto == null)
                 return BadRequest("Client cannot be null");
-            await clientService.CreateAsync(clientDTO, ct);
+            var id = await clientService.CreateAsync(_clientCreateDto, ct);
 
-            return Ok(clientDTO);
+            return Ok(id);
         }
     }
 }

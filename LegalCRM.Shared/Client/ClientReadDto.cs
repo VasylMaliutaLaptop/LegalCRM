@@ -2,11 +2,11 @@
 
 namespace LegalCRM.Shared.Client
 {
-    public class ClientDTO
+    public class ClientReadDto
     {
         public int Id { get; set; }
         public ClientStatus Status { get; set; } = ClientStatus.Draft;
-
+        public List<CaseReadDto> CasesReadDto { get; set; } = [];
         // Audit
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? CreatedBy { get; set; }

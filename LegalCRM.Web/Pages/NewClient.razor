@@ -6,7 +6,7 @@
 <h3>NewClient</h3>
 
 <label>Статус</label>
-<InputSelect @bind-Value="clientDTO.Status">
+<InputSelect @bind-Value="_clientCreateDto.Status">
     @foreach (ClientStatus s in Enum.GetValues<ClientStatus>())
     {
         <option value="@s">@s</option>
@@ -16,10 +16,10 @@
 <button @onclick="AddClient">Добавить клиента</button>
 
 @code {
-    private ClientDTO clientDTO = new ();
+    private ClientCreateDto _clientCreateDto = new();
 
     private async Task AddClient()
     {
-        var response = await Http.PostAsJsonAsync("api/Client/addClient", clientDTO);
+        var response = await Http.PostAsJsonAsync("api/Client/addClient", _clientCreateDto);
     }
 }

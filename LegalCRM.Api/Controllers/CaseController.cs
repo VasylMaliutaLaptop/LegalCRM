@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using LegalCRM.Api.Services;
 using LegalCRM.Data;
 using LegalCRM.Shared.Case;
 using Microsoft.AspNetCore.Mvc;
@@ -10,18 +9,13 @@ namespace LegalCRM.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CaseController(AppDbContext context, IMapper mapper, ClientService clientService) : Controller
+    public class CaseController(AppDbContext context, IMapper mapper) : Controller
     {
         [HttpPost("addStayCase")]
         public async Task<IActionResult> AddStay(StayCaseCreateDto dto)
         {
-            if (dto is null) return BadRequest("Case cannot be null");
-
-            var exists = await context.Clients.AnyAsync(c => c.Id == dto.ClientId);
-            if (!exists)
-            {
-                dto.ClientId = await clientService.EnsureClientAsync(dto.ClientId);
-            }
+            if (dto is null) return 
+                    BadRequest("Case cannot be null");
 
             var entity = mapper.Map<StayCase>(dto);
             entity.CreatedAt = DateTime.UtcNow;

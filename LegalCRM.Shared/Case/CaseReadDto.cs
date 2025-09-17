@@ -10,7 +10,7 @@ namespace LegalCRM.Shared.Case
     public class CaseReadDto
     {
         public int Id { get; set; }
-        public ClientDTO Client { get; set; } = null!;
+        public ClientReadDto ClientReadDto { get; set; } = null!;
         public CaseStatus Status { get; set; } 
         public DateTime CreatedAt { get; set; }
         public string? CreatedBy { get; set; }

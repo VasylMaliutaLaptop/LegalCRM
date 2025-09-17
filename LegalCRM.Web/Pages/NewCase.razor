@@ -7,11 +7,11 @@
 
 <div class="mb-3">
     <label class="form-label">Клиент</label>
-    <select class="form-select" @bind="selectedClientId">
+    <select class="form-select" @bind="_selectedClientId">
         <option value="0">— Новый клиент —</option>
-        @if (clients != null)
+        @if (_clients != null)
         {
-            @foreach (var cl in clients)
+            @foreach (var cl in _clients)
             {
                 <option value="@cl.Id">Клиент #@cl.Id (@cl.Status)</option>
             }
@@ -19,30 +19,57 @@
     </select>
 </div>
 
-@if (selectedClientId == 0)
+@if (_selectedClientId == 0)
 {
+    <h4>Новый клиент</h4>
 
+@*     <div class="mb-3">
+        <label class="form-label">Имя клиента</label>
+        <InputText @bind-Value="_clientCreateDto.Name" class="form-control"
+            placeholder="Введите имя клиента" />
+    </div> *@
+
+    <div class="mb-3">
+        <label>Статус</label>
+        <InputSelect @bind-Value="_clientCreateDto.Status">
+            @foreach (ClientStatus s in Enum.GetValues<ClientStatus>())
+            {
+                <option value="@s">@s</option>
+            }
+        </InputSelect>
+    </div>
 }
 
 <button @onclick="AddCase">Добавить дело побыта</button>
 
 @code {
-    private List<ClientDTO>? clients;
-    private int selectedClientId = 0; // 0 = "Новый клиент"
-    private StayCaseCreateDto caseDTO = new StayCaseCreateDto()
+    private List<ClientReadDto>? _clients;
+    private int _selectedClientId = 0; // 0 = "Новый клиент"
+    private StayCaseCreateDto _caseCreateDTO = new StayCaseCreateDto()
     {
         Status = CaseStatus.Draft,
         Reason = "New Reason"
     };
+    private ClientCreateDto _clientCreateDto = new();
 
     protected override async Task OnInitializedAsync()
     {
-        clients = await Http.GetFromJsonAsync<List<ClientDTO>>("api/Client/getAll");
+        _clients = await Http.GetFromJsonAsync<List<ClientReadDto>>("api/Client/getAll");
     }
 
     private async Task AddCase()
     {
-        caseDTO.ClientId = selectedClientId;
-        var response = await Http.PostAsJsonAsync("api/case/addStayCase", caseDTO);
+        if (_selectedClientId == 0)
+        {
+            using var createResp = await Http.PostAsJsonAsync("api/Client/addClient", _clientCreateDto);
+            createResp.EnsureSuccessStatusCode();
+
+            var clientId = await createResp.Content.ReadFromJsonAsync<int>();
+            _selectedClientId = clientId;
+
+            _clients = await Http.GetFromJsonAsync<List<ClientReadDto>>("api/Client/getAll");
+        }
+        _caseCreateDTO.ClientId = _selectedClientId;
+        var response = await Http.PostAsJsonAsync("api/case/addStayCase", _caseCreateDTO);
     }
 }
