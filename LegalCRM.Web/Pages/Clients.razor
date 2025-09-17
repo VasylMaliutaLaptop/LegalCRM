@@ -1,8 +1,33 @@
 ﻿@page "/clients"
+@using LegalCRM.Shared.Client
+@inject NavigationManager Nav
+@inject HttpClient Http
 @attribute [Authorize]
 
 <h3>Profiles</h3>
+@if (clients != null)
+{
+    @foreach (var cl in clients)
+    {
+        <p>Клиент #@cl.Id (@cl.Status)</p>
+    }
+}
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="AddClient">Добавить клиента</button>
+</div>
 
 @code {
-
+    private List<ClientDTO>? clients;
+    protected override async Task OnInitializedAsync()
+    {
+        clients = await Http.GetFromJsonAsync<List<ClientDTO>>("api/Client/list");
+    }
+    private async void AddClient()
+    {
+        var client = new ClientDTO
+        {
+            Status = ClientStatus.Draft
+        };
+        var response = await Http.PostAsJsonAsync("api/Client/addClient", client);
+    }
 }

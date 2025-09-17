@@ -1,13 +1,28 @@
 ﻿@page "/cases"
 @attribute [Authorize]
 @using System.Net.Http.Json
+@using LegalCRM.Shared.Case
 @inject NavigationManager Nav
+@inject HttpClient Http
 
 <h3>Cases</h3>
-
-<button>Добавить дело</button>
-
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="NavigateToAddCase">Добавить дело</button>
+</div>
 
 @code {
+    private void NavigateToAddCase()
+    {
+        Nav.NavigateTo("cases/add");
+    }
 
+    private void ViewCase(int id)
+    {
+        Nav.NavigateTo($"cases/{id}");
+    }
+
+    private void EditCase(int id)
+    {
+        Nav.NavigateTo($"cases/{id}/edit");
+    }
 }

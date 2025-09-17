@@ -1,0 +1,54 @@
+﻿@page "/cases/add"
+@using LegalCRM.Shared.Client
+@using LegalCRM.Shared.Case
+@inject HttpClient Http
+
+<h3>Добавить дело</h3>
+
+<div class="mb-3">
+    <label class="form-label">Клиент</label>
+    <select class="form-select" @bind="selectedClientId">
+        <option value="0">— Новый клиент —</option>
+        @if (clients != null)
+        {
+            @foreach (var cl in clients)
+            {
+                <option value="@cl.Id">Клиент #@cl.Id (@cl.Status)</option>
+            }
+        }
+    </select>
+</div>
+
+@if (selectedClientId == 0)
+{
+
+}
+
+<button @onclick="AddCase">Добавить дело побыта</button>
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="alert alert-info mt-3">@message</div>
+}
+
+@code {
+    private List<ClientDTO>? clients;
+    private int selectedClientId = 0; // 0 = "Новый клиент"
+    private StayCaseCreateDto caseDTO = new StayCaseCreateDto()
+    {
+        Status = CaseStatus.Draft,
+        Reason = "New Reason"
+    };
+    private string? message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clients = await Http.GetFromJsonAsync<List<ClientDTO>>("api/Client/list");
+    }
+
+    private async Task AddCase()
+    {
+        caseDTO.ClientId = selectedClientId;
+        var response = await Http.PostAsJsonAsync("api/case/addStayCase", caseDTO);
+    }
+}

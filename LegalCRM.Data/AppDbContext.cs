@@ -3,9 +3,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LegalCRM.Data
 {
-public class AppDbContext : IdentityUserContext<User>
-{
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-}
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUserContext<User>(options)
+    {
+        public DbSet<Case> Cases => Set<Case>();
+        public DbSet<Client> Clients => Set<Client>();
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            // Наследование дел (TPH по умолчанию + дискриминатор)
+            builder.Entity<Case>()
+             .HasDiscriminator<string>("CaseType")
+             .HasValue<Case>("Base")
+             .HasValue<StayCase>("Stay");// можно оставить дефолтный дискриминатор
 
+            builder.Entity<Case>()
+              .HasOne(c => c.Client)
+              .WithMany(cl => cl.Cases)
+              .HasForeignKey(c => c.ClientId)
+              .IsRequired()
+              .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
 }

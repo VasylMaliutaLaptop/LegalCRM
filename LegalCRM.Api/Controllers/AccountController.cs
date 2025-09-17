@@ -1,6 +1,7 @@
-﻿using LegalCRM.Api.Services;
+﻿using LegalCRM.Data;
 using LegalCRM.Shared.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,14 +12,21 @@ namespace LegalCRM.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountController(UserService userService) : ControllerBase
+    public class AccountController(UserManager<User> userManager) : ControllerBase
     {
-        private readonly UserService _userService = userService;
+        private readonly UserManager<User> _userManager = userManager;
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDTO register)
         {
-            var result = await _userService.RegisterUserAsync(register.UserName, register.Email, register.Password);
+            var user = new User
+            {
+                UserName = register.UserName,
+                Email = register.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, register.Password);
+
             if (result.Succeeded)
                 return Ok("Пользователь успешно зарегистрирован");
             else
@@ -27,8 +35,13 @@ namespace LegalCRM.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO login, [FromServices] IConfiguration config)
         {
-            var ok = await _userService.ValidateCredentialsAsync(login.UserName, login.Password);
-            if (!ok) return Unauthorized("Неверные учетные данные");
+            var user = await _userManager.FindByNameAsync(login.UserName);
+            if (user is null) 
+                return NotFound("Пользователь не найден");
+
+            var ok = await _userManager.CheckPasswordAsync(user, login.Password);
+            if (!ok) 
+                return Unauthorized("Неверные учетные данные");
 
             var jwt = config.GetSection("Jwt");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["Key"]!));
@@ -52,7 +65,7 @@ namespace LegalCRM.Api.Controllers
             );
 
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
-            return Ok(new { access_token = accessToken, expires });
+            return Ok(new { AccessToken = accessToken, expires });
         }
         [Authorize]
         [HttpGet("me")]
