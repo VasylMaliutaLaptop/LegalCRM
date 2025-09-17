@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LegalCRM.Shared.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace LegalCRM.Data
     public class Client
     {
         public int Id { get; set; }
+        public ClientStatus Status { get; set; }
         // Audit
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? CreatedBy { get; set; }

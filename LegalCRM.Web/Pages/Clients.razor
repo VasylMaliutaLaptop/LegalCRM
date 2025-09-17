@@ -5,16 +5,34 @@
 @attribute [Authorize]
 
 <h3>Profiles</h3>
-@if (clients != null)
-{
-    @foreach (var cl in clients)
-    {
-        <p>Клиент #@cl.Id (@cl.Status)</p>
-    }
-}
 <div class="mb-3">
-    <button class="btn btn-primary" @onclick="AddClient">Добавить клиента</button>
+    <button class="btn btn-primary" @onclick="NavigateToAddClient">Добавить клиента</button>
 </div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Status</th>
+            <th>CreatedAt</th>
+            <th>UpdatedAt</th>
+            <th>Client</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (clients != null)
+        {
+            foreach (var item in clients)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Status</td>
+                    <td>@item.CreatedAt</td>
+                    <td>@item.UpdatedAt</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
 @code {
     private List<ClientDTO>? clients;
@@ -22,12 +40,8 @@
     {
         clients = await Http.GetFromJsonAsync<List<ClientDTO>>("api/Client/getAll");
     }
-    private async void AddClient()
+    private void NavigateToAddClient()
     {
-        var client = new ClientDTO
-        {
-            Status = ClientStatus.Draft
-        };
-        var response = await Http.PostAsJsonAsync("api/Client/addClient", client);
+        Nav.NavigateTo("clients/add");
     }
 }

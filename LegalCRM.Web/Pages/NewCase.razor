@@ -26,11 +26,6 @@
 
 <button @onclick="AddCase">Добавить дело побыта</button>
 
-@if (!string.IsNullOrWhiteSpace(message))
-{
-    <div class="alert alert-info mt-3">@message</div>
-}
-
 @code {
     private List<ClientDTO>? clients;
     private int selectedClientId = 0; // 0 = "Новый клиент"
@@ -39,7 +34,6 @@
         Status = CaseStatus.Draft,
         Reason = "New Reason"
     };
-    private string? message;
 
     protected override async Task OnInitializedAsync()
     {

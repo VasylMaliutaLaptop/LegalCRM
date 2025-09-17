@@ -1,0 +1,25 @@
+﻿@page "/clients/add"
+@using LegalCRM.Shared.Client
+@using Microsoft.AspNetCore.Components.Forms
+@inject HttpClient Http
+
+<h3>NewClient</h3>
+
+<label>Статус</label>
+<InputSelect @bind-Value="clientDTO.Status">
+    @foreach (ClientStatus s in Enum.GetValues<ClientStatus>())
+    {
+        <option value="@s">@s</option>
+    }
+</InputSelect>
+
+<button @onclick="AddClient">Добавить клиента</button>
+
+@code {
+    private ClientDTO clientDTO = new ();
+
+    private async Task AddClient()
+    {
+        var response = await Http.PostAsJsonAsync("api/Client/addClient", clientDTO);
+    }
+}

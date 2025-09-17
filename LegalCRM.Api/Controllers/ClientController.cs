@@ -9,7 +9,7 @@ namespace LegalCRM.Api.Controllers
     public class ClientController(ClientService clientService) : Controller
     {
         [HttpGet("getAll")]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> GetAll()
         {
             var items = await clientService.GetListAsync();
             return Ok(items);
