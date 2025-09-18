@@ -12,12 +12,12 @@ namespace LegalCRM.Api.Controllers
     public class CaseController(AppDbContext context, IMapper mapper) : Controller
     {
         [HttpPost("addStayCase")]
-        public async Task<IActionResult> AddStay(StayCaseCreateDto dto)
+        public async Task<IActionResult> AddStay(CaseCreateDto dto)
         {
             if (dto is null) return 
                     BadRequest("Case cannot be null");
 
-            var entity = mapper.Map<StayCase>(dto);
+            var entity = mapper.Map<Case>(dto);
             entity.CreatedAt = DateTime.UtcNow;
 
             context.Cases.Add(entity);

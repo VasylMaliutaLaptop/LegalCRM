@@ -60,8 +60,6 @@ namespace LegalCRM.Data.Migrations
                     b.ToTable("Cases");
 
                     b.HasDiscriminator<string>("CaseType").HasValue("Base");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("LegalCRM.Data.Client", b =>
@@ -220,16 +218,6 @@ namespace LegalCRM.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("LegalCRM.Data.StayCase", b =>
-                {
-                    b.HasBaseType("LegalCRM.Data.Case");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("text");
-
-                    b.HasDiscriminator().HasValue("Stay");
                 });
 
             modelBuilder.Entity("LegalCRM.Data.Case", b =>

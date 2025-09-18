@@ -21,7 +21,6 @@ namespace LegalCRM.Api.Services
             await context.SaveChangesAsync(ct);
             return entity.Id;
         }
-
         public async Task<bool> UpdateAsync(int id, ClientReadDto clientReadDto, CancellationToken ct = default)
         {
             var entity = await context.Clients.FirstOrDefaultAsync(c => c.Id == id, ct);
@@ -33,7 +32,6 @@ namespace LegalCRM.Api.Services
             await context.SaveChangesAsync(ct);
             return true;
         }
-
         public async Task<bool> DeleteAsync(int id, CancellationToken ct = default)
         {
             var entity = await context.Clients.FirstOrDefaultAsync(c => c.Id == id, ct);

@@ -45,10 +45,9 @@
 @code {
     private List<ClientReadDto>? _clients;
     private int _selectedClientId = 0; // 0 = "Новый клиент"
-    private StayCaseCreateDto _caseCreateDTO = new StayCaseCreateDto()
+    private CaseCreateDto _caseCreateDTO = new CaseCreateDto()
     {
-        Status = CaseStatus.Draft,
-        Reason = "New Reason"
+        Status = CaseStatus.Draft
     };
     private ClientCreateDto _clientCreateDto = new();
 

@@ -13,8 +13,7 @@ namespace LegalCRM.Data
             // Наследование дел (TPH по умолчанию + дискриминатор)
             builder.Entity<Case>()
              .HasDiscriminator<string>("CaseType")
-             .HasValue<Case>("Base")
-             .HasValue<StayCase>("Stay");// можно оставить дефолтный дискриминатор
+             .HasValue<Case>("Base");// можно оставить дефолтный дискриминатор
 
             builder.Entity<Case>()
               .HasOne(c => c.Client)

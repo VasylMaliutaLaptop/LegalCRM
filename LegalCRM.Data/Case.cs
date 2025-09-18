@@ -1,13 +1,8 @@
 ﻿using LegalCRM.Shared.Case;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LegalCRM.Data
 {
-    public abstract class Case
+    public class Case
     {
         public int Id { get; set; }
         public int ClientId { get; set; }       // FK (NOT NULL)

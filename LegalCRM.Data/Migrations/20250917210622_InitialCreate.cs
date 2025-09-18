@@ -43,6 +43,7 @@ namespace LegalCRM.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -126,8 +127,7 @@ namespace LegalCRM.Data.Migrations
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    CaseType = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: false),
-                    Reason = table.Column<string>(type: "text", nullable: true)
+                    CaseType = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
