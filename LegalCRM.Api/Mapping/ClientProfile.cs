@@ -17,9 +17,7 @@ namespace LegalCRM.Api.Mapping
 
             // Entity -> DTO(чтение)
             CreateMap<Client, ClientReadDto>()
-                .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.CreatedAt))
-                .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => s.UpdatedAt))
-                .ForMember(d => d.CasesReadDto, o => o.MapFrom(s => s.Cases));
+                .ForMember(d => d.CaseIds, o => o.MapFrom(s => s.Cases.Select(c => c.Id)));
         }
     }
 }

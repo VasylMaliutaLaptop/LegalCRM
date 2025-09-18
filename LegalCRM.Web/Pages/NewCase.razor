@@ -69,6 +69,6 @@
             _clients = await Http.GetFromJsonAsync<List<ClientReadDto>>("api/Client/getAll");
         }
         _caseCreateDTO.ClientId = _selectedClientId;
-        var response = await Http.PostAsJsonAsync("api/case/addStayCase", _caseCreateDTO);
+        var response = await Http.PostAsJsonAsync("api/case/addCase", _caseCreateDTO);
     }
 }

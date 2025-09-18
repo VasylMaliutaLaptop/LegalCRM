@@ -1,5 +1,4 @@
-﻿using LegalCRM.Api.Services;
-using LegalCRM.Data;
+﻿using LegalCRM.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +8,6 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<ClientService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient",

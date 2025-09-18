@@ -11,8 +11,8 @@ namespace LegalCRM.Api.Controllers
     [Route("api/[controller]")]
     public class CaseController(AppDbContext context, IMapper mapper) : Controller
     {
-        [HttpPost("addStayCase")]
-        public async Task<IActionResult> AddStay(CaseCreateDto dto)
+        [HttpPost("addCase")]
+        public async Task<IActionResult> Add(CaseCreateDto dto)
         {
             if (dto is null) return 
                     BadRequest("Case cannot be null");
@@ -33,23 +33,6 @@ namespace LegalCRM.Api.Controllers
                 .ToListAsync();
 
             return Ok(items);
-        }
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    var cases = await context.Cases.ToListAsync();
-        //    var dtos = mapper.Map<List<CaseReadDto>>(cases);
-        //    return Ok(dtos);
-        //}
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var dto = await context.Cases
-                .Where(c => c.Id == id)
-                .ProjectTo<CaseReadDto>(mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync();
-
-            if (dto is null) return NotFound();
-            return Ok(dto);
         }
     }
 }

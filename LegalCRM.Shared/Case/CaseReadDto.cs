@@ -1,16 +1,9 @@
-﻿using LegalCRM.Shared.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LegalCRM.Shared.Case
+﻿namespace LegalCRM.Shared.Case
 {
     public class CaseReadDto
     {
         public int Id { get; set; }
-        public ClientReadDto ClientReadDto { get; set; } = null!;
+        public int ClientId { get; set; }
         public CaseStatus Status { get; set; } 
         public DateTime CreatedAt { get; set; }
         public string? CreatedBy { get; set; }

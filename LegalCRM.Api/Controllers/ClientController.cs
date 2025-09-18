@@ -1,27 +1,35 @@
-﻿using LegalCRM.Api.Services;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using LegalCRM.Data;
 using LegalCRM.Shared.Client;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LegalCRM.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ClientController(ClientService clientService) : Controller
+    public class ClientController(AppDbContext context, IMapper mapper) : Controller
     {
         [HttpGet("getAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken ct = default)
         {
-            var items = await clientService.GetListAsync();
+            var items = await context.Clients
+                .AsNoTracking()
+                .ProjectTo<ClientReadDto>(mapper.ConfigurationProvider)
+                .ToListAsync(ct);
             return Ok(items);
         }
         [HttpPost("addClient")]
-        public async Task<IActionResult> Add(ClientCreateDto _clientCreateDto, CancellationToken ct = default)
+        public async Task<IActionResult> Add(ClientCreateDto clientCreateDto, CancellationToken ct = default)
         {
-            if (_clientCreateDto == null)
+            if (clientCreateDto == null)
                 return BadRequest("Client cannot be null");
-            var id = await clientService.CreateAsync(_clientCreateDto, ct);
+            var entity = mapper.Map<Client>(clientCreateDto);
+            context.Clients.Add(entity);
+            await context.SaveChangesAsync(ct);
 
-            return Ok(id);
+            return Ok(entity.Id);
         }
     }
 }
