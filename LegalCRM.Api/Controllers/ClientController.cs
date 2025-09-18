@@ -15,7 +15,6 @@ namespace LegalCRM.Api.Controllers
         public async Task<IActionResult> GetAll(CancellationToken ct = default)
         {
             var items = await context.Clients
-                .AsNoTracking()
                 .ProjectTo<ClientReadDto>(mapper.ConfigurationProvider)
                 .ToListAsync(ct);
             return Ok(items);

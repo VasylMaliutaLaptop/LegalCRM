@@ -1,5 +1,6 @@
 ﻿@page "/clients"
 @using LegalCRM.Shared.Client
+@using LegalCRM.Web.Components
 @inject NavigationManager Nav
 @inject HttpClient Http
 @attribute [Authorize]
@@ -8,38 +9,24 @@
 <div class="mb-3">
     <button class="btn btn-primary" @onclick="NavigateToAddClient">Добавить клиента</button>
 </div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Status</th>
-            <th>CreatedAt</th>
-            <th>UpdatedAt</th>
-            <th>Cases</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (clients != null)
+@if (_clients is null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        @foreach (var c in _clients)
         {
-            foreach (var item in clients)
-            {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>@item.Status</td>
-                    <td>@item.CreatedAt</td>
-                    <td>@item.UpdatedAt</td>
-                    <td>@item.CaseIds.Count</td>
-                </tr>
-            }
+            <ClientCard Client="c"/>
         }
-    </tbody>
-</table>
-
+    </div>
+}
 @code {
-    private List<ClientReadDto>? clients;
+    private List<ClientReadDto>? _clients;
     protected override async Task OnInitializedAsync()
     {
-        clients = await Http.GetFromJsonAsync<List<ClientReadDto>>("api/Client/getAll");
+        _clients = await Http.GetFromJsonAsync<List<ClientReadDto>>("api/Client/getAll");
     }
     private void NavigateToAddClient()
     {

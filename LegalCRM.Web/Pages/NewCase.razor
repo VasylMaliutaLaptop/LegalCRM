@@ -22,12 +22,11 @@
 @if (_selectedClientId == 0)
 {
     <h4>Новый клиент</h4>
-
-@*     <div class="mb-3">
-        <label class="form-label">Имя клиента</label>
-        <InputText @bind-Value="_clientCreateDto.Name" class="form-control"
-            placeholder="Введите имя клиента" />
-    </div> *@
+    <input placeholder="Имя" @bind="_clientCreateDto.ContactInfo.Name" />
+    <input placeholder="Фамилия" @bind="_clientCreateDto.ContactInfo.Surname" />
+    <input placeholder="Телефон" @bind="_clientCreateDto.ContactInfo.PhoneNumber" />
+    <input placeholder="Email" @bind="_clientCreateDto.ContactInfo.Email" />
+    <input placeholder="Адрес" @bind="_clientCreateDto.ContactInfo.Address" />
 
     <div class="mb-3">
         <label>Статус</label>

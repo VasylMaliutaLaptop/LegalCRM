@@ -1,0 +1,31 @@
+﻿@using LegalCRM.Shared.Client
+<div class="card h-100">
+    <div class="card-body">
+        <h5 class="card-title">Клиент #@Client.Id</h5>
+        <p class="card-text mb-1"><strong>Имя:</strong> @Client.ContactInfo.Name</p>
+        <p class="card-text mb-1"><strong>Фамилия:</strong> @Client.ContactInfo.Surname</p>
+        <p class="card-text mb-1"><strong>Email:</strong> @Client.ContactInfo.Email</p>
+        <p class="card-text mb-1"><strong>Телефон:</strong> @Client.ContactInfo.PhoneNumber</p>
+        <p class="card-text mb-1"><strong>Адрес:</strong> @(Client.ContactInfo.Address)</p>
+        <p class="card-text mb-1"><strong>Статус:</strong> @Client.Status</p>
+        <p class="card-text mb-1"><strong>Создан:</strong> @Client.CreatedAt</p>
+        <p class="card-text"><strong>Обновлён:</strong> @(Client.UpdatedAt?.ToString() ?? "-")</p>
+        @foreach (var c in Client.Cases)
+        {
+            <p class="card-text mb-1"><strong>Id:</strong> @c.Id</p>
+            <p class="card-text mb-1"><strong>Статус:</strong> @c.Status</p>
+        }
+        <div class="d-flex gap-2">
+@*             <button class="btn btn-outline-primary btn-sm" @onclick="() => OnView.InvokeAsync(Client.Id)">Просмотр</button>
+            <button class="btn btn-outline-secondary btn-sm" @onclick="() => OnEdit.InvokeAsync(Client.Id)">Редактировать</button>
+            <button class="btn btn-outline-danger btn-sm" @onclick="() => OnDelete.InvokeAsync(Client.Id)">Удалить</button> *@
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public ClientReadDto Client { get; set; } = default!;
+    // [Parameter] public EventCallback<int> OnView { get; set; }
+    // [Parameter] public EventCallback<int> OnEdit { get; set; }
+    // [Parameter] public EventCallback<int> OnDelete { get; set; }
+}

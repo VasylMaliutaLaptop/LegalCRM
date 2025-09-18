@@ -2,50 +2,50 @@
 @attribute [AllowAnonymous]
 @using System.Net.Http.Json
 @using LegalCRM.Shared.Contracts
+@using LegalCRM.Shared.User
 @inject HttpClient Http
 @inject NavigationManager Nav
 
 <h3>Регистрация пользователя</h3>
 
-<EditForm Model="@_registerDTO" OnValidSubmit="HandleRegister">
+<EditForm Model="@_createUserDto" OnValidSubmit="HandleRegister">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div>
         <label>Имя пользователя:</label>
-        <InputText @bind-Value="_registerDTO.UserName" />
+        <InputText @bind-Value="_createUserDto.UserName" />
     </div>
     <div>
         <label>Email:</label>
-        <InputText @bind-Value="_registerDTO.Email" type="email" />
+        <InputText @bind-Value="_createUserDto.Email" type="email" />
     </div>
     <div>
         <label>Пароль:</label>
-        <InputText @bind-Value="_registerDTO.Password" type="password" />
+        <InputText @bind-Value="_createUserDto.Password" type="password" />
     </div>
 
-    <button type="submit" disabled="@busy">Зарегистрироваться</button>
+    <button type="submit" disabled="@_busy">Зарегистрироваться</button>
 </EditForm>
 
-@if (!string.IsNullOrEmpty(message))
+@if (!string.IsNullOrEmpty(_message))
 {
-    <p>@message</p>
+    <p>@_message</p>
 }
 
 @code {
-    private RegisterDTO _registerDTO = new();
-    private string? message;
-    private bool busy;
+    private CreateUserDto _createUserDto = new();
+    private string? _message;
+    private bool _busy;
 
     private async Task HandleRegister()
     {
         try
         {
-            busy = true;
-            message = null;
+            _busy = true;
+            _message = null;
 
-            // предполагается, что Http.BaseAddress уже указывает на API
-            var resp = await Http.PostAsJsonAsync("api/account/register", _registerDTO);
+            var resp = await Http.PostAsJsonAsync("api/account/register", _createUserDto);
             if (resp.IsSuccessStatusCode)
             {
                 // при успехе — перейти на логин или на returnUrl при наличии
@@ -57,9 +57,9 @@
             else
             {
                 var error = await resp.Content.ReadAsStringAsync();
-                message = string.IsNullOrWhiteSpace(error) ? "Ошибка регистрации" : $"Ошибка регистрации: {error}";
+                _message = string.IsNullOrWhiteSpace(error) ? "Ошибка регистрации" : $"Ошибка регистрации: {error}";
             }
         }
-        finally { busy = false; }
+        finally { _busy = false; }
     }
 }

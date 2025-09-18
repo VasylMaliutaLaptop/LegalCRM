@@ -1,5 +1,5 @@
 ﻿using LegalCRM.Data;
-using LegalCRM.Shared.Contracts;
+using LegalCRM.Shared.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +16,15 @@ namespace LegalCRM.Api.Controllers
     {
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDTO register)
+        public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
         {
             var user = new User
             {
-                UserName = register.UserName,
-                Email = register.Email
+                UserName = createUserDto.UserName,
+                Email = createUserDto.Email
             };
 
-            var result = await userManager.CreateAsync(user, register.Password);
+            var result = await userManager.CreateAsync(user, createUserDto.Password);
 
             if (result.Succeeded)
                 return Ok("Пользователь успешно зарегистрирован");
@@ -32,7 +32,7 @@ namespace LegalCRM.Api.Controllers
                 return BadRequest(result.Errors);
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO login, [FromServices] IConfiguration config)
+        public async Task<IActionResult> Login(LoginDto login, [FromServices] IConfiguration config)
         {
             var user = await userManager.FindByNameAsync(login.UserName);
             if (user is null) 
@@ -48,7 +48,7 @@ namespace LegalCRM.Api.Controllers
 
             var claims = new List<Claim>
             {
-                new (JwtRegisteredClaimNames.Sub, login.UserName),
+                new (JwtRegisteredClaimNames.Sub, user.Id),
                 new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new (JwtRegisteredClaimNames.Iss, jwt["Issuer"]!)
                 // добавьте роли/свои claims при необходимости
@@ -64,7 +64,7 @@ namespace LegalCRM.Api.Controllers
             );
 
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
-            return Ok(new { AccessToken = accessToken, expires });
+            return Ok(new { AccessToken = accessToken, expires});
         }
         [Authorize]
         [HttpGet("me")]

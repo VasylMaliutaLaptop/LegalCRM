@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace LegalCRM.Data
 {
@@ -7,13 +8,10 @@ namespace LegalCRM.Data
     {
         public DbSet<Case> Cases => Set<Case>();
         public DbSet<Client> Clients => Set<Client>();
+        public DbSet<ContactInfo> ContactInfos => Set<ContactInfo>();
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Наследование дел (TPH по умолчанию + дискриминатор)
-            builder.Entity<Case>()
-             .HasDiscriminator<string>("CaseType")
-             .HasValue<Case>("Base");// можно оставить дефолтный дискриминатор
 
             builder.Entity<Case>()
               .HasOne(c => c.Client)
@@ -21,6 +19,14 @@ namespace LegalCRM.Data
               .HasForeignKey(c => c.ClientId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Client>()
+                .HasOne(c => c.ContactInfo)
+                .WithOne(ci => ci.Client)
+                .HasForeignKey<ContactInfo>(ci => ci.ClientId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

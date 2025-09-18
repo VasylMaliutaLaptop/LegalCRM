@@ -1,9 +1,16 @@
 ﻿@page "/clients/add"
+@using LegalCRM.Shared
 @using LegalCRM.Shared.Client
 @using Microsoft.AspNetCore.Components.Forms
 @inject HttpClient Http
 
 <h3>NewClient</h3>
+
+<input placeholder="Имя" @bind="_clientCreateDto.ContactInfo.Name" />
+<input placeholder="Фамилия" @bind="_clientCreateDto.ContactInfo.Surname" />
+<input placeholder="Телефон" @bind="_clientCreateDto.ContactInfo.PhoneNumber" />
+<input placeholder="Email" @bind="_clientCreateDto.ContactInfo.Email" />
+<input placeholder="Адрес" @bind="_clientCreateDto.ContactInfo.Address" />
 
 <label>Статус</label>
 <InputSelect @bind-Value="_clientCreateDto.Status">
@@ -17,7 +24,6 @@
 
 @code {
     private ClientCreateDto _clientCreateDto = new();
-
     private async Task AddClient()
     {
         var response = await Http.PostAsJsonAsync("api/Client/addClient", _clientCreateDto);

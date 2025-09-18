@@ -30,11 +30,6 @@ namespace LegalCRM.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CaseType")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)");
-
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
 
@@ -42,15 +37,17 @@ namespace LegalCRM.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedBy")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UpdatedBy")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -58,8 +55,6 @@ namespace LegalCRM.Data.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("Cases");
-
-                    b.HasDiscriminator<string>("CaseType").HasValue("Base");
                 });
 
             modelBuilder.Entity("LegalCRM.Data.Client", b =>
@@ -74,20 +69,61 @@ namespace LegalCRM.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedBy")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UpdatedBy")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("LegalCRM.Data.ContactInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId")
+                        .IsUnique();
+
+                    b.ToTable("ContactInfos");
                 });
 
             modelBuilder.Entity("LegalCRM.Data.User", b =>
@@ -231,6 +267,17 @@ namespace LegalCRM.Data.Migrations
                     b.Navigation("Client");
                 });
 
+            modelBuilder.Entity("LegalCRM.Data.ContactInfo", b =>
+                {
+                    b.HasOne("LegalCRM.Data.Client", "Client")
+                        .WithOne("ContactInfo")
+                        .HasForeignKey("LegalCRM.Data.ContactInfo", "ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.HasOne("LegalCRM.Data.User", null)
@@ -261,6 +308,9 @@ namespace LegalCRM.Data.Migrations
             modelBuilder.Entity("LegalCRM.Data.Client", b =>
                 {
                     b.Navigation("Cases");
+
+                    b.Navigation("ContactInfo")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
