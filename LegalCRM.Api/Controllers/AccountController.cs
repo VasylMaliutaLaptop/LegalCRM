@@ -14,7 +14,6 @@ namespace LegalCRM.Api.Controllers
     [Route("api/[controller]")]
     public class AccountController(UserManager<User> userManager) : ControllerBase
     {
-        private readonly UserManager<User> _userManager = userManager;
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDTO register)
@@ -25,7 +24,7 @@ namespace LegalCRM.Api.Controllers
                 Email = register.Email
             };
 
-            var result = await _userManager.CreateAsync(user, register.Password);
+            var result = await userManager.CreateAsync(user, register.Password);
 
             if (result.Succeeded)
                 return Ok("Пользователь успешно зарегистрирован");
@@ -35,11 +34,11 @@ namespace LegalCRM.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO login, [FromServices] IConfiguration config)
         {
-            var user = await _userManager.FindByNameAsync(login.UserName);
+            var user = await userManager.FindByNameAsync(login.UserName);
             if (user is null) 
                 return NotFound("Пользователь не найден");
 
-            var ok = await _userManager.CheckPasswordAsync(user, login.Password);
+            var ok = await userManager.CheckPasswordAsync(user, login.Password);
             if (!ok) 
                 return Unauthorized("Неверные учетные данные");
 
