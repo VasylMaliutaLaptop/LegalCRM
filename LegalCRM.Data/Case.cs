@@ -5,6 +5,7 @@ namespace LegalCRM.Data
     public class Case
     {
         public int Id { get; set; }
+        public string UserId { get; set; } = string.Empty;
         public int ClientId { get; set; }
         public Client Client { get; set; } = null!;
         public CaseStatus Status { get; set; }

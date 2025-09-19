@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace LegalCRM.Data
 {
@@ -13,20 +12,35 @@ namespace LegalCRM.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Case>()
-              .HasOne(c => c.Client)
-              .WithMany(cl => cl.Cases)
-              .HasForeignKey(c => c.ClientId)
-              .IsRequired()
-              .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Client>()
-                .HasOne(c => c.ContactInfo)
-                .WithOne(ci => ci.Client)
-                .HasForeignKey<ContactInfo>(ci => ci.ClientId)
+            builder.Entity<User>()
+                .HasMany(u => u.Cases)
+                .WithOne()
+                .HasForeignKey(c => c.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<User>()
+                .HasMany(u => u.Clients)
+                .WithOne()
+                .HasForeignKey(cl => cl.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Case>()
+                .HasOne(c => c.Client)
+                .WithMany(cl => cl.Cases)
+                .HasForeignKey(c => c.ClientId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //builder.Entity<Client>()
+            //    .HasOne(c => c.ContactInfo)
+            //    .WithOne(ci => ci.Client)
+            //    .HasForeignKey<ContactInfo>(ci => ci.ClientId)
+            //    .IsRequired()
+            //    .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Client>()
+                .OwnsOne(c => c.ContactInfo);
         }
     }
 }

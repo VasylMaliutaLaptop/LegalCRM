@@ -4,6 +4,7 @@ using LegalCRM.Data;
 using LegalCRM.Shared.Case;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace LegalCRM.Api.Controllers
 {
@@ -17,8 +18,13 @@ namespace LegalCRM.Api.Controllers
             if (dto is null) return 
                     BadRequest("Case cannot be null");
 
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized();
+
             var entity = mapper.Map<Case>(dto);
             entity.CreatedAt = DateTime.UtcNow;
+            entity.UserId = userIdClaim;
 
             context.Cases.Add(entity);
             await context.SaveChangesAsync();

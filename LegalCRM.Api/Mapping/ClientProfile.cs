@@ -13,7 +13,8 @@ namespace LegalCRM.Api.Mapping
                 .ForMember(d => d.Id, o => o.Ignore())
                 .ForMember(d => d.CreatedAt, o => o.Ignore())
                 .ForMember(d => d.UpdatedAt, o => o.Ignore())
-                .ForMember(d => d.Cases, o => o.Ignore());
+                .ForMember(d => d.Cases, o => o.Ignore())
+                .ForMember(d => d.UserId, o => o.Ignore());
 
             // Entity -> DTO(чтение)
             CreateMap<Client, ClientReadDto>();

@@ -4,6 +4,7 @@ namespace LegalCRM.Data
 {
     public class User : IdentityUser
     {
-        // дополнительные поля, если нужны
+        public ICollection<Case> Cases { get; set; } = [];
+        public ICollection<Client> Clients { get; set; } = [];
     }
 }

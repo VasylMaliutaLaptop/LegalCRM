@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LegalCRM.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250918175133_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250919141553_one")]
+    partial class one
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,9 +53,15 @@ namespace LegalCRM.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Cases");
                 });
@@ -85,48 +91,15 @@ namespace LegalCRM.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("LegalCRM.Data.ContactInfo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId")
-                        .IsUnique();
-
-                    b.ToTable("ContactInfos");
                 });
 
             modelBuilder.Entity("LegalCRM.Data.User", b =>
@@ -267,18 +240,63 @@ namespace LegalCRM.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("LegalCRM.Data.ContactInfo", b =>
-                {
-                    b.HasOne("LegalCRM.Data.Client", "Client")
-                        .WithOne("ContactInfo")
-                        .HasForeignKey("LegalCRM.Data.ContactInfo", "ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("LegalCRM.Data.User", null)
+                        .WithMany("Cases")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("LegalCRM.Data.Client", b =>
+                {
+                    b.HasOne("LegalCRM.Data.User", null)
+                        .WithMany("Clients")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("LegalCRM.Data.ContactInfo", "ContactInfo", b1 =>
+                        {
+                            b1.Property<int>("ClientId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Address")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<int>("Id")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("PhoneNumber")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Surname")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("ClientId");
+
+                            b1.ToTable("ContactInfos");
+
+                            b1.WithOwner("Client")
+                                .HasForeignKey("ClientId");
+
+                            b1.Navigation("Client");
+                        });
+
+                    b.Navigation("ContactInfo")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -311,9 +329,13 @@ namespace LegalCRM.Data.Migrations
             modelBuilder.Entity("LegalCRM.Data.Client", b =>
                 {
                     b.Navigation("Cases");
+                });
 
-                    b.Navigation("ContactInfo")
-                        .IsRequired();
+            modelBuilder.Entity("LegalCRM.Data.User", b =>
+                {
+                    b.Navigation("Cases");
+
+                    b.Navigation("Clients");
                 });
 #pragma warning restore 612, 618
         }
